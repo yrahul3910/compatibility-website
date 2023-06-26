@@ -4,13 +4,13 @@ import { render } from '@testing-library/react';
 import App from './components/App/App';
 
 const setup = (initialPath = '/') => {
-  let history;
-  render(
-    <MemoryRouter initialEntries={[initialPath]}>
-      <App />
-    </MemoryRouter>,
-  );
-  return { history };
+    let history;
+    render(
+        <MemoryRouter initialEntries={[initialPath]}>
+            <App />
+        </MemoryRouter>,
+    );
+    return { history };
 };
 
 export default setup;

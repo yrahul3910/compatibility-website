@@ -1,11 +1,13 @@
 // Import '../sass/index.sass';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './components/App/App.tsx';
 
-ReactDOM.render(
-  <Router>
-    <App />
-  </Router>, document.getElementById('app')
+const container = document.getElementById('app');
+const root = createRoot(container);
+root.render(
+    <Router>
+        <App />
+    </Router>
 );

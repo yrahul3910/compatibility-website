@@ -1,6 +1,8 @@
 import React from 'react';
-import * as S from './App.style.ts';
+import { AutoForm } from 'uniforms-semantic';
+import { bridge as schema } from '../../schemas/PersonSchema.ts';
+import 'semantic-ui-css/semantic.min.css';
 
-const App: React.FC = () => <S.Header>My App</S.Header>;
+const App: React.FC = () => <AutoForm schema={schema} onSubmit={console.log} />;
 
 export default App;
