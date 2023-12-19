@@ -1,5 +1,5 @@
 from server.match.comparators import Matcher
-from server.models import Comparator, Schema, SurveyResponse
+from server.models import Schema, SurveyResponse
 
 
 def match(survey: Schema, response: SurveyResponse) -> float:
@@ -12,7 +12,8 @@ def match(survey: Schema, response: SurveyResponse) -> float:
     """
     score: float = 1.0
 
-    assert survey.version == response.version
+    if survey.version != response.version:
+        raise ValueError(f"Version mismatch: {survey.version} != {response.version}")
 
     for answer in response.responses:
         question = next(q for q in survey.questions if q.key == answer.key)
@@ -23,8 +24,12 @@ def match(survey: Schema, response: SurveyResponse) -> float:
 
         # If the type is "int" or "float", clip it to the range.
         if question.type in ["int", "float"]:
+            if "range" not in question.model_fields or question.range is None:
+                raise ValueError(f"Range missing from question: {question}")
+
             answer.value = float(max(question.range.min, min(question.range.max, float(answer.value))))
 
-        comparator: Comparator = question.match
-        matcher = Matcher(comparator, answer.value, score)
+        matcher = Matcher(question, answer.value, score)
         score = matcher.apply()
+
+    return score

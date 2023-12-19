@@ -43,6 +43,8 @@ ruff check . --fix
 
 ## Documentation
 
+Note: you will need an OpenAI API key, and store it in a `.env` file in the `server/` directory as `OPENAI_API_KEY`.
+
 ### For users
 
 If you want to create your own questionnaire, you need to create a `schema.json` file. The structure is explained below.
@@ -94,7 +96,7 @@ The `type` key specifies the type of comparator to use. Currently, the following
 Whatever comparator you choose, you must have the name of that comparator as a key, to which you will pass the options. This idea is also used in the postprocessors.
 
 The `postprocess` key specifies what you want to do with the result of the comparator above. Again, it takes a `type` that specifies the operator to use, and that operator is passed options. This may be null if you do not wish to postprocess the result. The following operators are currently supported:
-* `center_repel`: Acts the same as described above.
+* `center_repel_01`: Acts the same as `center_repel` between 0 and 1.
 
 The `merge` key specifies how to merge the results to the total score. It takes a `type` key that specifies the merger to use, and that merger is passed options. The following mergers are currently supported:
 * `multiply`: Multiplies by a constant real number. Takes a float `factor` as options.

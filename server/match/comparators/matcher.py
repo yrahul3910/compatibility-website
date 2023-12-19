@@ -1,8 +1,7 @@
 # ruff: noqa: F821
 # The above is temporary
-from server.match.comparators import Comparator
-from server.match.comparators.in_range import in_range
-from server.models import Number
+from server.match.comparators import center_repel, fuzzy_match, in_range
+from server.models import Number, Question
 
 
 class Matcher:
@@ -14,30 +13,40 @@ class Matcher:
         "enum_pref": enum_pref,
     }
     AVAILABLE_POSTPROCESSORS = {
-        "center_repel": center_repel
+        "center_repel_01": center_repel_01
     }
     AVAILABLE_MERGERS = {
         "multiply": multiply,
         "add_if_higher": add_if_higher
     }
 
-    def __init__(self, comparator: Comparator, value: Number, score: float):
-        assert comparator.type in self.AVAILABLE_COMPARATORS
+    def __init__(self, question: Question, value: Number | str, score: float):
+        if question.match is None:
+            raise ValueError(f"In question {question.key}, comparator is None")
+
+        if question.match.type not in self.AVAILABLE_COMPARATORS:
+            raise ValueError(
+                f"Invalid comparator: {question.match.type} not in {self.AVAILABLE_COMPARATORS.keys()}")
 
         self.score = score
         self.value = value
-        self.comparator = comparator
+        self.question = question
 
     def apply(self):
-        if self.comparator.merge is None:
+        comparator = self.question.match
+
+        if comparator is None:
+            raise AssertionError(f"In question {self.question.key}, comparator is None")
+
+        if comparator.merge is None:
             return self.score
 
-        matched_score = self.AVAILABLE_COMPARATORS[self.comparator.type](self.comparator, self.value)
+        matched_score = self.AVAILABLE_COMPARATORS[comparator.type](self.question, self.value)
 
-        if self.comparator.postprocess is not None:
-            operator_name = self.comparator.postprocess.type
-            matched_score = self.AVAILABLE_POSTPROCESSORS[operator_name](self.comparator.postprocess, matched_score)
+        if comparator.postprocess is not None:
+            operator_name = comparator.postprocess.type
+            matched_score = self.AVAILABLE_POSTPROCESSORS[operator_name](matched_score)
 
-        self.AVAILABLE_MERGERS[self.comparator.merge.type](self.comparator.merge, matched_score)
+        self.AVAILABLE_MERGERS[comparator.merge.type](comparator.merge, matched_score, self.score)
 
         return matched_score
