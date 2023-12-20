@@ -29,6 +29,10 @@ class FuzzyMatch(BaseModel):
     reference: List[str]
 
 
+class LLMProximity(BaseModel):
+    query: str
+
+
 class Comparator(BaseModel):
     type: Literal["in_range", "fuzzy_match", "llm_proximity", "center_repel", "enum_pref"]
     postprocess: Optional[PostprocessOperator] = None
@@ -39,6 +43,7 @@ class Comparator(BaseModel):
     in_range: Optional[Range] = Range(min=0, max=1)
     center_repel: Optional[CenterRepel] = CenterRepel(factor=1.0)
     fuzzy_match: Optional[FuzzyMatch] = FuzzyMatch(reference=["Taylor Swift"])  # if there is no reference, I decide
+    llm_proximity: Optional[LLMProximity] = LLMProximity(query="Reply with the number 1.")
 
 
 class Question(BaseModel):

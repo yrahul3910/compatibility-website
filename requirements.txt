@@ -1,5 +1,6 @@
 pre-commit
 ruff
 pydantic
-openai
+google-cloud-aiplatform>=1.38
 numpy
+python-dotenv

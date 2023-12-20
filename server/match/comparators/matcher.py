@@ -1,6 +1,6 @@
 # ruff: noqa: F821
 # The above is temporary
-from server.match.comparators import center_repel, fuzzy_match, in_range
+from server.match.comparators import center_repel, fuzzy_match, in_range, llm_proximity
 from server.models import Number, Question
 
 

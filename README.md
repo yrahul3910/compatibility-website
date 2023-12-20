@@ -43,7 +43,20 @@ ruff check . --fix
 
 ## Documentation
 
-Note: you will need an OpenAI API key, and store it in a `.env` file in the `server/` directory as `OPENAI_API_KEY`.
+### Setup
+
+You will need to set up Vertex AI. To do this, first install the `gcloud` CLI tool, and run
+```
+gcloud auth login
+gcloud auth application-default login
+```
+
+On Google VMs such as GCE, this shouldn't be necessary and will "just work". Set up a `.env` file:
+```
+PROJECT_ID=<your-project-id>
+REGION=us-central1 <or any other>
+EMBEDDING_MODEL=textembedding-gecko@003 <recommended>
+```
 
 ### For users
 
@@ -89,7 +102,7 @@ Each of the `...questions` must be a JSON object, with `display`, `key`, `type`,
 The `type` key specifies the type of comparator to use. Currently, the following are supported:
 * `in_range`: Returns 1 if the value is in the range, and 0 otherwise. Can only be used with `int` and `float` answers. It takes `min` and `max` as options.
 * `fuzzy_match`: Embeds the answer and references using an autoencoding model, and computes the maximum distance. It takes an array called `reference` as options.
-* `llm_proximity`: Queries an LLM on the distance to a reference point. This by definition does not return a stable value, and should be used sparingly. It takes a string called `reference` as options.
+* `llm_proximity`: Queries an LLM on the distance to a reference point. This by definition does not return a stable value, and should be used sparingly. It takes a string called `query`, which should be a question posed to an LLM, as options. You can use the answer from the survey by using `$value` in this query.
 * `center_repel`: Defined only for `int` and `float` answers. Repels the answer away from the center to give a more extreme value. Takes a `factor` key in options. Note that if the absolute value of the factor is less than 1, it acts as a center attractor rather than a repeller. Values between 0.8 and 1.2 are recommended.
 * `enum_pref`: Defined only for `enum` answers. Takes a `mapping` option that defines a mapping from the enum values to a real number. The result is the value of the mapping for the answer.
 
