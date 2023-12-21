@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from server.models import Number
+from server.models.common import Number
 
 
 class Answer(BaseModel):

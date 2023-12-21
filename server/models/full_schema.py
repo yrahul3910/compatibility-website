@@ -9,8 +9,12 @@ class CenterRepel(BaseModel):
     factor: float
 
 
-CenterRepel01 = CenterRepel
-Multiply = CenterRepel
+class CenterRepel01(BaseModel):
+    factor: float
+
+
+class Multiply(BaseModel):
+    factor: float
 
 
 class AddIfHigher(BaseModel):
