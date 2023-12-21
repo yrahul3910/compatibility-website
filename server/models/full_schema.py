@@ -1,28 +1,34 @@
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 from server.models import Range
+
+
+class CenterRepel(BaseModel):
+    factor: float
+
+
+CenterRepel01 = CenterRepel
+Multiply = CenterRepel
+
+
+class AddIfHigher(BaseModel):
+    threshold: float
+    add: float
 
 
 class PostprocessOperator(BaseModel):
     type: Literal["center_repel_01"]
 
-    model_config = ConfigDict(
-        extra="allow"
-    )
+    center_repel_01: Optional[CenterRepel01]
 
 
 class MergeOperator(BaseModel):
     type: Literal["multiply", "add_if_higher"]
 
-    model_config = ConfigDict(
-        extra="allow"
-    )
-
-
-class CenterRepel(BaseModel):
-    factor: float
+    multiply: Optional[Multiply] = Multiply(factor=1.0)
+    add_if_higher: Optional[AddIfHigher] = AddIfHigher(threshold=1, add=0)
 
 
 class FuzzyMatch(BaseModel):
@@ -31,6 +37,10 @@ class FuzzyMatch(BaseModel):
 
 class LLMProximity(BaseModel):
     query: str
+
+
+class EnumSpec(BaseModel):
+    mapping: dict[str, float]
 
 
 class Comparator(BaseModel):
@@ -44,6 +54,7 @@ class Comparator(BaseModel):
     center_repel: Optional[CenterRepel] = CenterRepel(factor=1.0)
     fuzzy_match: Optional[FuzzyMatch] = FuzzyMatch(reference=["Taylor Swift"])  # if there is no reference, I decide
     llm_proximity: Optional[LLMProximity] = LLMProximity(query="Reply with the number 1.")
+    enum_pref: Optional[EnumSpec] = EnumSpec(mapping={"Yes": 1.0, "No": 0.0})
 
 
 class Question(BaseModel):
@@ -52,6 +63,8 @@ class Question(BaseModel):
     type: str
     range: Optional[Range] = None
     match: Optional[Comparator] = None
+
+    enum: Optional[List[str]] = ["Yes", "No"]
 
 
 class Schema(BaseModel):

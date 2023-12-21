@@ -1,6 +1,6 @@
-# ruff: noqa: F821
-# The above is temporary
-from server.match.comparators import center_repel, fuzzy_match, in_range, llm_proximity
+from server.match.comparators import center_repel, enum_pref, fuzzy_match, in_range, llm_proximity
+from server.match.mergers import add_if_higher, multiply
+from server.match.postprocessors import center_repel_01
 from server.models import Number, Question
 
 
@@ -45,7 +45,7 @@ class Matcher:
 
         if comparator.postprocess is not None:
             operator_name = comparator.postprocess.type
-            matched_score = self.AVAILABLE_POSTPROCESSORS[operator_name](matched_score)
+            matched_score = self.AVAILABLE_POSTPROCESSORS[operator_name](comparator.postprocess, matched_score)
 
         self.AVAILABLE_MERGERS[comparator.merge.type](comparator.merge, matched_score, self.score)
 
