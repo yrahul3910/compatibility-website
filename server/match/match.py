@@ -32,4 +32,5 @@ def match(survey: Schema, response: SurveyResponse) -> float:
         matcher = Matcher(question, answer.value, score)
         score = matcher.apply()
 
-    return score
+    # Clip score to [0, 1]
+    return max(0.0, min(1.0, score))
