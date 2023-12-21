@@ -49,8 +49,8 @@ def fuzzy_match(question: Question, value: str) -> float:
 
     # Embed value, and all strings in reference.
     model = TextEmbeddingModel.from_pretrained(os.environ["EMBEDDING_MODEL"])
-    reference_inputs = [TextEmbeddingInput(text=value, task_type="CLUSTERING") for value in reference]
-    value_input = TextEmbeddingInput(text=value, task_type="CLUSTERING")
+    reference_inputs = [TextEmbeddingInput(text=value, task_type=comparator.fuzzy_match.type) for value in reference]
+    value_input = TextEmbeddingInput(text=value, task_type=comparator.fuzzy_match.type)
 
     value_embedding = np.array(model.get_embeddings([value_input])[0].values)
     reference_embeddings = np.array(

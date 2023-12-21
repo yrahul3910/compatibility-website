@@ -1,3 +1,5 @@
+import logging
+
 from server.match.comparators import center_repel, enum_pref, fuzzy_match, in_range, llm_proximity
 from server.match.mergers import add_if_higher, multiply
 from server.match.postprocessors import center_repel_01
@@ -41,12 +43,17 @@ class Matcher:
         if comparator.merge is None:
             return self.score
 
+        logging.debug(f"Applying comparator {comparator.type}")
         matched_score = self.AVAILABLE_COMPARATORS[comparator.type](self.question, self.value)
+        logging.debug(f"Got score {matched_score}")
 
         if comparator.postprocess is not None:
             operator_name = comparator.postprocess.type
             matched_score = self.AVAILABLE_POSTPROCESSORS[operator_name](comparator.postprocess, matched_score)
 
-        self.AVAILABLE_MERGERS[comparator.merge.type](comparator.merge, matched_score, self.score)
+            logging.debug(f"Post-processing score is {matched_score}")
 
-        return matched_score
+        merged_score = self.AVAILABLE_MERGERS[comparator.merge.type](comparator.merge, matched_score, self.score)
+        logging.debug(f"Post-merge score is {merged_score}")
+
+        return merged_score

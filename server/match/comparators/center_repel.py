@@ -26,4 +26,7 @@ def center_repel(question: Question, value: float) -> float:
     center: float = question.range.min + (question.range.max - question.range.min) / 2
     distance: float = value - center
 
-    return center + distance * comparator.center_repel.factor
+    adjusted_score = center + distance * comparator.center_repel.factor
+
+    # Represent this as a fraction between min and max
+    return (adjusted_score - question.range.min) / (question.range.max - question.range.min)

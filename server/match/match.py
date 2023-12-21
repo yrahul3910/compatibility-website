@@ -1,3 +1,7 @@
+import argparse
+import json
+import logging
+
 from server.match.comparators import Matcher
 from server.models import Schema, SurveyResponse
 
@@ -29,8 +33,23 @@ def match(survey: Schema, response: SurveyResponse) -> float:
 
             answer.value = float(max(question.range.min, min(question.range.max, float(answer.value))))
 
+        logging.debug(f"Matching {question.key}...")
         matcher = Matcher(question, answer.value, score)
         score = matcher.apply()
+        logging.debug("")
 
     # Clip score to [0, 1]
     return max(0.0, min(1.0, score))
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+
+    parser = argparse.ArgumentParser(description="Convert a schema to a JSON to be sent to the front-end.")
+    parser.add_argument("schema", type=str, help="The schema file to be converted")
+    parser.add_argument("response", type=str, help="The response file to be converted")
+    args = parser.parse_args()
+
+    schema = json.load(open(args.schema))
+    response = json.load(open(args.response))
+    print(match(Schema(**schema), SurveyResponse(**response)))

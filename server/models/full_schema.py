@@ -37,6 +37,7 @@ class MergeOperator(BaseModel):
 
 class FuzzyMatch(BaseModel):
     reference: List[str]
+    type: str = "CLUSTERING"
 
 
 class LLMProximity(BaseModel):
